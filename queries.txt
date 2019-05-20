@@ -1,5 +1,16 @@
 CREATE DATABASE IF NOT EXISTS ezops_sql;
 
+# Create a table of employee departments
+
+CREATE TABLE department (
+	DepartmentId int NOT NULL AUTO_INCREMENT,
+	Name varchar(255) NOT NULL,
+	City varchar(255),
+	PRIMARY KEY (DepartmentId)
+);
+
+# Create a table for employees with their departments, linked to department table
+
 CREATE TABLE employee (
 	EmployeeId int NOT NULL AUTO_INCREMENT,
 	LastName varchar(255) NOT NULL,
@@ -10,12 +21,7 @@ CREATE TABLE employee (
 	FOREIGN KEY (DepartmentId) REFERENCES department(DepartmentId)
 );
 
-CREATE TABLE department (
-	DepartmentId int NOT NULL AUTO_INCREMENT,
-	Name varchar(255) NOT NULL,
-	City varchar(255),
-	PRIMARY KEY (DepartmentId)
-);
+# Add departments to the department table
 
 INSERT INTO department
 	VALUES ('Bakery','London'),
@@ -28,6 +34,8 @@ INSERT INTO department
 	('Transit','St. Louis'),
 	('Monsters','Vermilion City'),
 	('Indie Rock','Seattle');
+	
+# Add employees into the employee table
 
 INSERT INTO employee (LastName,FirstName,Salary,DepartmentId)
 	VALUES ('Baker','Tom',40000,1),
@@ -60,6 +68,8 @@ INSERT INTO employee (LastName,FirstName,Salary,DepartmentId)
 	('McElroy','Clint',100000,7),
 	('McElroy','Sydney',150000,7),
 	('Drake','Nathan',40000,4);
+	
+# Query to get average salaries by city
 
 SELECT department.City, AVG(employee.Salary)
 	FROM employee
@@ -67,4 +77,20 @@ SELECT department.City, AVG(employee.Salary)
 	ON department.DepartmentId = employee.DepartmentId
 	GROUP BY department.City;
 
+# Query to get current server time
+
 SELECT CURRENT_TIME;
+
+
+# When we EXPLAIN the average salary query, we get:
+#
+# +----+-------------+------------+------------+------+---------------+--------------+---------+-----------------------------------+------+----------+---------------------------------+
+# | id | select_type | table      | partitions | type | possible_keys | key          | key_len | ref                               | rows | filtered | Extra                           |
+# +----+-------------+------------+------------+------+---------------+--------------+---------+-----------------------------------+------+----------+---------------------------------+
+# |  1 | SIMPLE      | department | NULL       | ALL  | PRIMARY       | NULL         | NULL    | NULL                              |   10 |   100.00 | Using temporary; Using filesort |
+# |  1 | SIMPLE      | employee   | NULL       | ref  | DepartmentId  | DepartmentId | 5       | ezops_sql.department.DepartmentId |    1 |   100.00 | NULL                            |
+# +----+-------------+------------+------------+------+---------------+--------------+---------+-----------------------------------+------+----------+---------------------------------+
+# 2 rows in set, 1 warning (0.00 sec)
+#
+# The foreign key used in the employees table should help this scale to 1 million rows, but indexing the departments
+# would make this more efficient.

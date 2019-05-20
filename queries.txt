@@ -1,0 +1,70 @@
+CREATE DATABASE IF NOT EXISTS ezops_sql;
+
+CREATE TABLE employee (
+	EmployeeId int NOT NULL AUTO_INCREMENT,
+	LastName varchar(255) NOT NULL,
+	FirstName varchar(255),
+	Salary int,
+	DepartmentId int,
+	PRIMARY KEY (EmployeeId),
+	FOREIGN KEY (DepartmentId) REFERENCES department(DepartmentId)
+);
+
+CREATE TABLE department (
+	DepartmentId int NOT NULL AUTO_INCREMENT,
+	Name varchar(255) NOT NULL,
+	City varchar(255),
+	PRIMARY KEY (DepartmentId)
+);
+
+INSERT INTO department
+	VALUES ('Bakery','London'),
+	('Produce','Sydney'),
+	('Machinery','Kansas City'),
+	('Environment','Columbus'),
+	('Interior','New York City'),
+	('Digital Imaging','San Francisco'),
+	('Order Fulfillment','Huntington'),
+	('Transit','St. Louis'),
+	('Monsters','Vermilion City'),
+	('Indie Rock','Seattle');
+
+INSERT INTO employee (LastName,FirstName,Salary,DepartmentId)
+	VALUES ('Baker','Tom',40000,1),
+	('Baker','Colin',66000,1),
+	('Smith','Matt',11000,3),
+	('Jovanka','Tegan',55000,2),
+	('Slughorn','Horace',33500,4),
+	('Tyler','Rose',35000,5),
+	('Jones','Martha',44000,7),
+	('Harkness','Jack',90000,5),
+	('Pond','Amy',60000,8),
+	('Oswald','Clara',11111,9),
+	('Song','River',87654,8),
+	('Tenant','David',10000,10),
+	('Roberts','Alan',56000,1),
+	('Hollywood','Paul',30000,7),
+	('Berry','Mary',100000,1),
+	('Granger','Hermione',150000,6),
+	('Runner','Homestar',77000,5),
+	('Bad','Strong',55000,6),
+	('Cheat','The',88008,3),
+	('Pertwee','John',33300,3),
+	('Roderick','John',70000,10),
+	('Benjamin','Dan',75000,9),
+	('Mann','Merlin',56000,6),
+	('Roderick','Susan',80000,10),
+	('McElroy','Justin',77000,7),
+	('McElroy','Travis',66000,7),
+	('McElroy','Griffin',55000,7),
+	('McElroy','Clint',100000,7),
+	('McElroy','Sydney',150000,7),
+	('Drake','Nathan',40000,4);
+
+SELECT department.City, AVG(employee.Salary)
+	FROM employee
+	INNER JOIN department
+	ON department.DepartmentId = employee.DepartmentId
+	GROUP BY department.City;
+
+SELECT CURRENT_TIME;
